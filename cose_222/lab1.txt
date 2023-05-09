@@ -1,0 +1,29 @@
+main:
+
+addiu $s0, $0, 40
+
+addiu $s1, $0, 6
+
+addiu $s2, $s0, 0
+
+ 
+
+for:
+
+slt $s3, $s1, $s2
+
+ 
+
+beq $s3, $s4, done
+
+nop
+
+subu $s2, $s2, $s1
+
+ 
+
+j for
+
+ 
+
+done:

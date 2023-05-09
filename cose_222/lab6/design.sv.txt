@@ -1,0 +1,83 @@
+`include "alu.sv"
+`include "regfile.sv"
+`include "imem.sv"
+`include "dmem.sv"
+
+
+module sext(input [15:0] in, output [31:0] out);
+
+    assign out = 32'(signed'(in));
+  endmodule
+      
+module datapath(
+  input logic iClk,
+  input logic iReset,
+  input logic iRegWrite,
+  input logic iMemWrite,
+  input logic [2:0] iALUControl
+);
+  
+  logic [31:0] pc;
+  logic [31:0] data;
+  logic [31:0] outda1,outda2;
+  logic [31:0] realse;
+  logic [31:0] aluresult;
+  logic oozero;
+  logic [31:0] dameoutda;
+  logic [4:0] reg_read_addr_1, reg_read_addr_2;
+  
+  
+    always_ff @ (posedge iClk, posedge iReset) begin
+    if (iReset) begin
+      pc <= 32'b0;
+    end else begin
+      pc <= pc + 32'd4;        
+    end
+  end
+  
+  
+
+      imem insmem(
+        .iAddr	(pc),
+        .oRdata	(data)
+      );
+  
+  
+  assign reg_read_addr_1 = data[25:21];  
+  assign reg_read_addr_2 = data[20:16];  
+  
+  regfile rfile(
+    .iClk	(iClk),
+    .iReset	(iReset),
+    .iRaddr1	(reg_read_addr_1),
+    .iRaddr2	(reg_read_addr_2),
+    .iWaddr	(reg_read_addr_2), //임시
+    .iWe	(iRegWrite),
+    .iWdata	(dameoutda),
+    .oRdata1	(outda1), 
+    .oRdata2	(outda2)
+  );
+  
+  sext sign(
+    .in	(data[15:0]),
+    .out (realse)
+  );
+  
+
+  alu al(
+    .iA	(outda1),
+    .iB (realse),
+    .iF	(iALUControl),	
+    .oY	(aluresult),
+    .oZero (oozero)
+  );
+  
+  dmem dame(
+    .iClk	(iClk),
+    .iWe	(iMemWrite),
+    .iAddr	(aluresult),
+    .iWdata	(outda2),
+    .oRdata	(dameoutda)
+  );
+  
+endmodule
