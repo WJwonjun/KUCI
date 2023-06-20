@@ -1,0 +1,14 @@
+opp,yourbest(red)
+,Average Winning Rate
+yourbase1,0.9
+yourbase2,0.9
+yourbase3,-0.2
+baseline,1
+NumWin,3
+AvgWinningRate,0.65
+,Average Scores
+yourbase1,0.9
+yourbase2,0.9
+yourbase3,0
+baesline,1
+AvgScore,0.7
