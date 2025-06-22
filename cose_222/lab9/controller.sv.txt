@@ -1,0 +1,78 @@
+module controller(
+  input logic [5:0] iOp,
+  input logic [5:0] iFf,
+  output logic oRegWrite,
+  output logic oMemWrite,
+  output logic [2:0] oALUControl,
+  output logic oRegDst,
+  output logic oAluSrc,
+  output logic oBranch,
+  output logic oMemtoReg,
+  output logic [1:0] oALUOp
+);
+  always_comb
+    case(iOp)
+      6'b100011: begin
+        oRegWrite = 1;
+        oMemWrite = 0;
+        oALUControl = 3'b010;
+        oRegDst = 0;
+        oAluSrc = 1;
+        oBranch = 0;
+        oMemtoReg = 1;
+        oALUOp = 2'b00;
+      end
+      6'b101011: begin
+        oRegWrite = 0;
+        oMemWrite = 1;
+        oALUControl = 3'b010;
+        oRegDst = 0;
+        oAluSrc = 1;
+        oBranch = 0;
+        oMemtoReg = 0;
+        oALUOp = 2'b00;   
+      end
+      6'b000000: begin
+        oRegWrite = 1;
+        oMemWrite = 0;
+        oRegDst = 1;
+        oAluSrc = 0;
+        oBranch = 0;
+        oMemtoReg = 0;
+        oALUOp = 2'b10; 
+        case(iFf)
+          6'b100000: begin
+                    oALUControl = 3'b010;
+          end
+          6'b100010: begin
+             oALUControl = 3'b110;
+      end
+                   6'b100100: begin
+             oALUControl = 3'b000;
+      end
+                    6'b100101: begin
+             oALUControl = 3'b001;
+      end
+                    6'b101010: begin
+             oALUControl = 3'b111;
+      end
+          default:begin
+            oALUControl = 3'b000;
+          end
+        endcase
+      end
+            
+      default: begin
+         oRegWrite = 0;
+        oMemWrite = 0;
+        oALUControl = 3'b010;
+        oRegDst = 0;
+        oAluSrc = 0;
+        oBranch = 0;
+        oMemtoReg = 0;
+        oALUOp = 2'b00;   
+      end
+    endcase
+endmodule
+ 
+  
